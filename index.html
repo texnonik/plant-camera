@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Plant Camera">
+<meta name="apple-mobile-web-app-title" content="Камера растений">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#10170f">
-<title>Plant Camera</title>
+<title>Камера растений</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 /* Layout: a full-screen viewfinder, and results laid out like a herbarium specimen sheet. */
@@ -88,201 +88,201 @@ a { color: var(--moss); overflow-wrap: anywhere; }
 <div id="camera" class="screen">
   <video id="video" playsinline muted autoplay></video>
   <div class="reticle" id="reticle"></div>
-  <div class="hint">Fill the frame with one leaf or flower</div>
+  <div class="hint">Наведите камеру так, чтобы один лист или цветок заполнил кадр</div>
   <div class="camera-note" id="cameraNote" hidden></div>
   <div class="bar">
-    <button class="side" id="pick" type="button">Photos</button>
-    <button class="shutter" id="shoot" type="button" aria-label="Take photo and identify plant" disabled></button>
-    <button class="side right" id="keyBtn" type="button">Key</button>
+    <button class="side" id="pick" type="button">Фото</button>
+    <button class="shutter" id="shoot" type="button" aria-label="Сфотографировать и определить растение" disabled></button>
+    <button class="side right" id="keyBtn" type="button">Ключ</button>
   </div>
   <input id="file" type="file" accept="image/*" hidden>
 </div>
 
 <div id="busy" class="screen" hidden>
   <div>
-    <img id="busyImg" alt="Your photo">
-    <p class="pulse">Identifying your plant…</p>
+    <img id="busyImg" alt="Ваше фото">
+    <p class="pulse">Определяем растение…</p>
   </div>
 </div>
 
 <div id="result" class="screen sheet" hidden>
   <div class="page">
-    <img id="rImg" class="specimen" alt="Your photo">
+    <img id="rImg" class="specimen" alt="Ваше фото">
     <div>
-      <div class="eyebrow">Identified as</div>
+      <div class="eyebrow">Это растение</div>
       <h1 id="rName"></h1>
       <p class="latin" id="rLatin"></p>
       <p class="family" id="rFamily"></p>
       <span class="pill" id="rConf"></span>
     </div>
     <div class="care" id="rCare">
-      <section><h2>Watering</h2><p id="rWater"></p></section>
-      <section><h2>Pruning</h2><p id="rPrune"></p></section>
-      <section><h2>Wintering</h2><p id="rWinter"></p></section>
+      <section><h2>Полив</h2><p id="rWater"></p></section>
+      <section><h2>Обрезка</h2><p id="rPrune"></p></section>
+      <section><h2>Зимовка</h2><p id="rWinter"></p></section>
     </div>
-    <p id="rMissing" style="margin:0" hidden>This plant isn't in the care guide yet. <a id="rSearch" target="_blank" rel="noopener">Search the web for care advice</a></p>
+    <p id="rMissing" style="margin:0" hidden>Этого растения пока нет в справочнике по уходу. <a id="rSearch" target="_blank" rel="noopener">Найти советы по уходу в интернете</a></p>
     <p class="note" id="rGroup" hidden></p>
     <p class="note" id="rAlt" hidden></p>
-    <button class="primary" id="again" type="button">Scan another plant</button>
-    <p class="note">Identified with Pl@ntNet. Care advice is a general guide for Latvia's climate. Don't eat a plant or use it as medicine based on this app.</p>
+    <button class="primary" id="again" type="button">Определить другое растение</button>
+    <p class="note">Растение определено сервисом Pl@ntNet. Советы по уходу — общие рекомендации для климата Латвии. Не употребляйте растение в пищу и не используйте его как лекарство, полагаясь только на это приложение.</p>
   </div>
 </div>
 
 <div id="message" class="screen sheet" hidden>
   <div class="page">
-    <img id="mImg" class="specimen" alt="Your photo">
+    <img id="mImg" class="specimen" alt="Ваше фото">
     <h1 id="mTitle"></h1>
     <p id="mText" style="margin:0"></p>
-    <button class="primary" id="mAgain" type="button">Try again</button>
-    <button class="secondary" id="mKey" type="button" hidden>Change key</button>
+    <button class="primary" id="mAgain" type="button">Попробовать ещё раз</button>
+    <button class="secondary" id="mKey" type="button" hidden>Изменить ключ</button>
   </div>
 </div>
 
 <div id="keyScreen" class="screen sheet" hidden>
   <form class="page" id="keyForm">
     <div>
-      <div class="eyebrow">One-time setup</div>
-      <h1>Add your free Pl@ntNet key</h1>
+      <div class="eyebrow">Настройка один раз</div>
+      <h1>Добавьте бесплатный ключ Pl@ntNet</h1>
     </div>
     <ol>
-      <li>Create a free account at <a href="https://my.plantnet.org/" target="_blank" rel="noopener">my.plantnet.org</a></li>
-      <li>Open <a href="https://my.plantnet.org/settings/api-key" target="_blank" rel="noopener">your API key settings</a> and tick "expose my API key".</li>
-      <li>Under "Authorized domains", add <strong>https://texnonik.github.io</strong> and save.</li>
-      <li>Copy the key and paste it below.</li>
+      <li>Создайте бесплатный аккаунт на сайте <a href="https://my.plantnet.org/" target="_blank" rel="noopener">my.plantnet.org</a></li>
+      <li>Откройте <a href="https://my.plantnet.org/settings/api-key" target="_blank" rel="noopener">настройки ключа API</a> и поставьте галочку «expose my API key».</li>
+      <li>В разделе «Authorized domains» добавьте <strong>https://texnonik.github.io</strong> и сохраните.</li>
+      <li>Скопируйте ключ и вставьте его ниже.</li>
     </ol>
-    <label for="keyInput">Pl@ntNet key
+    <label for="keyInput">Ключ Pl@ntNet
       <input id="keyInput" type="password" autocomplete="off" autocapitalize="off" spellcheck="false">
     </label>
     <p class="err" id="keyErr" hidden></p>
-    <button class="primary" type="submit">Save key</button>
-    <button class="secondary" id="keyCancel" type="button">Cancel</button>
-    <p class="note">The free plan allows 500 scans a day. The key stays on this phone and is sent only to Pl@ntNet, which uses your photos for identification.</p>
+    <button class="primary" type="submit">Сохранить ключ</button>
+    <button class="secondary" id="keyCancel" type="button">Отмена</button>
+    <p class="note">Бесплатный тариф позволяет делать 500 определений в день. Ключ хранится на этом телефоне и отправляется только в Pl@ntNet, который использует ваши фото для определения растений.</p>
   </form>
 </div>
 
 <canvas id="canvas" hidden></canvas>
 
 <script>
-// Care guide for Latvia's climate: [species or genus, Latvian name, watering, pruning, wintering].
+// Care guide for Latvia's climate: [species or genus, Russian name, watering, pruning, wintering].
 const CARE = [
   // Fruit and berries
-  ["Malus", "Ābele", "Water young trees weekly in dry spells. Established trees need a deep soak only in long droughts and while fruit swells.", "Prune in March before buds open. Remove dead, crossing and inward branches.", "Hardy. Protect young trunks from hares with mesh and whitewash them in late autumn."],
-  ["Pyrus", "Bumbiere", "Water young trees weekly in dry weather. Give older trees a deep soak in long droughts.", "Prune in March. Thin crowded branches and shorten overly long shoots.", "Choose hardy local varieties. Protect young trunks from hares and frost cracks."],
-  ["Prunus avium", "Saldais ķirsis", "Water weekly while young and during fruit swell. Avoid waterlogged ground.", "Prune lightly just after harvest in summer, not in winter, to reduce disease.", "Less hardy than sour cherry. Plant in a sheltered, sunny spot and protect the young trunk."],
-  ["Prunus cerasus", "Skābais ķirsis", "Water weekly while young and in dry spells during fruiting.", "Prune after harvest. Thin the crown and remove suckers.", "Hardy. Protect young trunks from hares."],
-  ["Prunus domestica", "Plūme", "Water in dry spells, especially while fruit swells.", "Prune lightly in late spring or summer. Remove dead wood and crossing branches.", "Fairly hardy. Avoid frost pockets and protect young trunks."],
-  ["Prunus padus", "Ieva", "Likes moist soil. Water only young plants or in long droughts.", "Prune after flowering if it outgrows its space.", "Very hardy. No protection needed."],
-  ["Ribes nigrum", "Upene", "Water deeply each week in dry weather, especially at flowering and while berries swell. Mulch to hold moisture.", "In late winter or early spring, cut about a third of the oldest stems to the ground.", "Very hardy. No protection needed."],
-  ["Ribes rubrum", "Sarkanā jāņoga", "Water weekly in dry spells while fruit develops.", "In early spring, remove stems older than about 5 years and thin the centre.", "Very hardy. No protection needed."],
-  ["Ribes uva-crispa", "Ērkšķoga", "Water in dry spells while berries swell. Mulch the roots.", "In early spring, remove old and low stems and open up the centre for air.", "Very hardy. No protection needed."],
-  ["Rubus idaeus", "Avene", "Water deeply weekly in dry weather from flowering to harvest. Mulch well.", "Cut fruited canes to the ground after harvest. Keep the strongest new canes.", "Hardy. Bend tall canes down in late autumn in exposed sites so snow covers them."],
-  ["Fragaria", "Zemene", "Water at the base 1 to 2 times a week while fruiting. Keep leaves and fruit dry.", "Remove runners you don't need. Cut old leaves after harvest.", "Mulch with straw or use fleece if there is little snow. Remove it in spring."],
-  ["Vaccinium corymbosum", "Krūmmellene", "Keep soil evenly moist, ideally with rainwater. It needs acid soil, so avoid hard tap water.", "From year 4, remove the oldest and weak stems in early spring.", "Hardy. Mulch with bark or pine needles and protect from hares."],
-  ["Vaccinium vitis-idaea", "Brūklene", "Keep acid soil moist in dry weather. Use rainwater if you can.", "Rarely needed. Cut back old, sparse plants in spring to renew them.", "Very hardy. Snow protects it well."],
-  ["Vaccinium myrtillus", "Mellene", "Needs moist, acid forest soil. Water garden plants with rainwater in dry spells.", "Rarely needed. Remove dead stems in spring.", "Very hardy. No protection needed."],
-  ["Vaccinium oxycoccos", "Dzērvene", "Needs constantly damp, acid, peaty soil. Use rainwater.", "Rarely needed. Trim straggling runners in spring.", "Very hardy. No protection needed."],
-  ["Hippophae rhamnoides", "Smiltsērkšķis", "Drought tolerant once established. Water young plants in dry spells.", "Prune in early spring. Remove old, dry and crossing branches, and wear gloves for the thorns.", "Very hardy. You need male and female plants for berries."],
-  ["Aronia", "Aronija", "Water young plants. Established shrubs tolerate most conditions but crop better with water in drought.", "In early spring, remove some of the oldest stems at the base.", "Very hardy. No protection needed."],
-  ["Sorbus aucuparia", "Pīlādzis", "Water young trees in dry spells. Older trees manage on rain.", "Prune in late winter only to remove damaged or crossing branches.", "Very hardy. Protect young trunks from hares."],
-  ["Viburnum opulus", "Irbene", "Likes moist soil. Water in dry spells.", "Prune after flowering to keep its shape, and remove old stems.", "Very hardy. No protection needed."],
-  ["Sambucus", "Plūškoks", "Water young plants in dry spells. Established shrubs need little.", "Hard prune in early spring to keep it compact, removing the oldest stems.", "Very hardy. No protection needed."],
-  ["Corylus", "Lazda", "Water young plants in dry spells. Older shrubs need little.", "In late winter, remove some old stems and suckers.", "Very hardy. No protection needed."],
-  ["Crataegus", "Vilkābele", "Water young plants. Tolerates dry spells once established.", "Trim after flowering or in late winter. Wear gloves for the thorns.", "Very hardy. No protection needed."],
-  ["Vitis", "Vīnogulājs", "Water young vines in dry weather. Established vines root deeply and need little.", "Prune hard in late autumn or early winter, not in spring when cuts bleed sap.", "Choose hardy varieties. Lay tender vines down and cover them with spruce branches."],
+  ["Malus", "Яблоня", "Молодые деревья поливайте раз в неделю в сухую погоду. Взрослым нужен обильный полив только в долгую засуху и при наливе плодов.", "Обрезайте в марте до распускания почек. Удаляйте сухие, перекрещивающиеся и растущие внутрь ветки.", "Зимостойкая. Защитите молодые стволы от зайцев сеткой и побелите их в конце осени."],
+  ["Pyrus", "Груша", "Молодые деревья поливайте раз в неделю в сухую погоду. Взрослым нужен обильный полив в долгую засуху.", "Обрезайте в марте. Прореживайте густые ветки и укорачивайте слишком длинные побеги.", "Выбирайте зимостойкие местные сорта. Защитите молодые стволы от зайцев и морозобоин."],
+  ["Prunus avium", "Черешня", "Поливайте раз в неделю, пока дерево молодое и при наливе плодов. Избегайте застоя воды.", "Обрезайте слегка сразу после сбора урожая летом, а не зимой, чтобы снизить риск болезней.", "Менее зимостойкая, чем вишня. Сажайте в защищённом солнечном месте и укрывайте молодой ствол."],
+  ["Prunus cerasus", "Вишня", "Поливайте раз в неделю, пока дерево молодое, и в сухую погоду при плодоношении.", "Обрезайте после сбора урожая. Прореживайте крону и удаляйте поросль.", "Зимостойкая. Защитите молодые стволы от зайцев."],
+  ["Prunus domestica", "Слива", "Поливайте в сухую погоду, особенно при наливе плодов.", "Обрезайте слегка в конце весны или летом. Удаляйте сухие и перекрещивающиеся ветки.", "Довольно зимостойкая. Не сажайте в низинах, где застаивается холод, и защищайте молодые стволы."],
+  ["Prunus padus", "Черёмуха", "Любит влажную почву. Поливайте только молодые растения или в долгую засуху.", "Обрезайте после цветения, если она разрослась.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Ribes nigrum", "Чёрная смородина", "Обильно поливайте раз в неделю в сухую погоду, особенно при цветении и наливе ягод. Мульчируйте, чтобы сохранить влагу.", "В конце зимы или ранней весной вырезайте у земли около трети самых старых ветвей.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Ribes rubrum", "Красная смородина", "Поливайте раз в неделю в сухую погоду, пока развиваются ягоды.", "Ранней весной удаляйте ветви старше 5 лет и прореживайте центр куста.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Ribes uva-crispa", "Крыжовник", "Поливайте в сухую погоду при наливе ягод. Мульчируйте корни.", "Ранней весной удаляйте старые и низкие ветви, осветляйте центр куста.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Rubus idaeus", "Малина", "Обильно поливайте раз в неделю в сухую погоду от цветения до сбора урожая. Хорошо мульчируйте.", "После сбора урожая срезайте отплодоносившие побеги у земли. Оставляйте самые сильные молодые побеги.", "Зимостойкая. На открытых местах в конце осени пригибайте высокие побеги, чтобы их укрыл снег."],
+  ["Fragaria", "Клубника (земляника садовая)", "Поливайте под корень 1–2 раза в неделю при плодоношении. Листья и ягоды должны оставаться сухими.", "Удаляйте лишние усы. После сбора урожая срезайте старые листья.", "Если снега мало, укройте соломой или спанбондом. Весной уберите укрытие."],
+  ["Vaccinium corymbosum", "Голубика высокорослая", "Держите почву равномерно влажной, лучше поливать дождевой водой. Нужна кислая почва, избегайте жёсткой водопроводной воды.", "С 4-го года ранней весной удаляйте самые старые и слабые ветви.", "Зимостойкая. Мульчируйте корой или сосновой хвоей и защищайте от зайцев."],
+  ["Vaccinium vitis-idaea", "Брусника", "В сухую погоду поддерживайте влажность кислой почвы. По возможности используйте дождевую воду.", "Обычно не нужна. Старые редкие растения можно омолодить обрезкой весной.", "Очень зимостойкая. Хорошо защищена снегом."],
+  ["Vaccinium myrtillus", "Черника", "Нужна влажная кислая лесная почва. В саду поливайте дождевой водой в сухую погоду.", "Обычно не нужна. Весной удаляйте сухие ветви.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Vaccinium oxycoccos", "Клюква", "Нужна постоянно сырая кислая торфяная почва. Используйте дождевую воду.", "Обычно не нужна. Весной подрезайте слишком длинные плети.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Hippophae rhamnoides", "Облепиха", "Прижившиеся растения переносят засуху. Молодые поливайте в сухую погоду.", "Обрезайте ранней весной. Удаляйте старые, сухие и перекрещивающиеся ветки, надевайте перчатки из-за колючек.", "Очень зимостойкая. Для урожая нужны мужские и женские растения."],
+  ["Aronia", "Арония (черноплодная рябина)", "Поливайте молодые растения. Взрослые кусты неприхотливы, но в засуху с поливом плодоносят лучше.", "Ранней весной удаляйте у основания часть самых старых ветвей.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Sorbus aucuparia", "Рябина обыкновенная", "Молодые деревья поливайте в сухую погоду. Взрослым хватает дождя.", "Обрезайте в конце зимы, только чтобы убрать повреждённые или перекрещивающиеся ветки.", "Очень зимостойкая. Защитите молодые стволы от зайцев."],
+  ["Viburnum opulus", "Калина обыкновенная", "Любит влажную почву. Поливайте в сухую погоду.", "Обрезайте после цветения для сохранения формы и удаляйте старые ветви.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Sambucus", "Бузина", "Молодые растения поливайте в сухую погоду. Взрослым кустам полив почти не нужен.", "Сильно обрезайте ранней весной для компактности, удаляя самые старые ветви.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Corylus", "Лещина (лесной орех)", "Молодые растения поливайте в сухую погоду. Взрослым кустам полив почти не нужен.", "В конце зимы удаляйте часть старых ветвей и поросль.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Crataegus", "Боярышник", "Поливайте молодые растения. Прижившись, переносит сухие периоды.", "Подстригайте после цветения или в конце зимы. Надевайте перчатки из-за колючек.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Vitis", "Виноград", "Молодые лозы поливайте в сухую погоду. Взрослые лозы глубоко укореняются, и полив им почти не нужен.", "Сильно обрезайте в конце осени или начале зимы, а не весной, когда срезы истекают соком.", "Выбирайте зимостойкие сорта. Нежные лозы снимите с опоры, положите на землю и укройте еловым лапником."],
 
   // Garden shrubs and climbers
-  ["Rosa", "Roze", "Water deeply at the base 1 to 2 times a week in dry weather. Keep leaves dry to reduce disease.", "In spring when buds swell, cut out dead wood and shorten stems to an outward-facing bud. Remove faded flowers.", "Mound soil or compost around the base in late autumn and cover with spruce branches. Uncover gradually in spring."],
-  ["Rosa rugosa", "Grumbuļainā roze", "Tolerates drought and sandy soil. Water young plants only.", "In early spring, remove old stems and trim suckers to keep it in bounds.", "Very hardy. No protection needed."],
-  ["Syringa", "Ceriņi", "Water young plants in dry spells. Established shrubs need little.", "Cut off faded flowers straight after flowering. Remove suckers and some old stems.", "Very hardy. No protection needed."],
-  ["Philadelphus", "Dārza jasmīns", "Water in dry spells, especially at flowering.", "Straight after flowering, cut flowered stems back and remove some old wood.", "Very hardy. Tips may freeze in hard winters, so trim them in spring."],
-  ["Hydrangea", "Hortenzija", "Likes constantly moist soil. Water deeply 1 to 2 times a week in dry weather.", "Panicle and smooth types: cut back in early spring. Bigleaf types: only remove old flowers and dead wood.", "Panicle and smooth types are hardy. Cover bigleaf types with dry leaves and fleece, or keep them in a frost-free place."],
-  ["Spiraea", "Spireja", "Water young plants in dry spells. Established shrubs need little.", "Spring-flowering types: prune after flowering. Summer-flowering types: prune in early spring.", "Very hardy. No protection needed."],
-  ["Forsythia", "Forsītija", "Water in dry spells while young.", "Prune straight after flowering. Remove some old stems at the base.", "Choose hardy varieties. Flower buds can freeze above the snow line in hard winters."],
-  ["Rhododendron", "Rododendrs", "Keep acid soil evenly moist, ideally with rainwater. Water well in autumn before frost.", "Snap off faded flowers. Prune only lightly after flowering.", "Mulch with pine needles or bark. Shade evergreen types with fleece from late-winter sun."],
-  ["Clematis", "Klematis", "Water deeply weekly in dry weather. Keep the roots cool with mulch or low plants.", "Pruning depends on the group. Late-summer flowering types can be cut to about 30 cm in early spring.", "Mulch the base in late autumn. Cover the crown with leaves or spruce branches."],
-  ["Parthenocissus", "Mežvīns", "Water young plants. Established plants need little.", "Trim in late winter or summer to keep it away from gutters and windows.", "Very hardy. No protection needed."],
-  ["Humulus lupulus", "Apinis", "Likes moist soil. Water in dry spells.", "Cut all stems to the ground in late autumn or early spring.", "Very hardy. Dies back and regrows from the roots."],
+  ["Rosa", "Роза", "Обильно поливайте под корень 1–2 раза в неделю в сухую погоду. Листья должны оставаться сухими, это снижает риск болезней.", "Весной, когда набухают почки, вырезайте сухие побеги и укорачивайте стебли до почки, смотрящей наружу. Удаляйте отцветшие цветки.", "В конце осени окучьте основание землёй или компостом и укройте еловым лапником. Весной снимайте укрытие постепенно."],
+  ["Rosa rugosa", "Роза морщинистая", "Переносит засуху и песчаную почву. Поливайте только молодые растения.", "Ранней весной удаляйте старые ветви и подрезайте поросль, чтобы куст не разрастался.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Syringa", "Сирень", "Молодые растения поливайте в сухую погоду. Взрослым кустам полив почти не нужен.", "Срезайте отцветшие соцветия сразу после цветения. Удаляйте поросль и часть старых ветвей.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Philadelphus", "Чубушник (садовый жасмин)", "Поливайте в сухую погоду, особенно при цветении.", "Сразу после цветения укорачивайте отцветшие побеги и удаляйте часть старой древесины.", "Очень зимостойкий. В суровые зимы кончики могут подмёрзнуть, весной их подрежьте."],
+  ["Hydrangea", "Гортензия", "Любит постоянно влажную почву. Обильно поливайте 1–2 раза в неделю в сухую погоду.", "Метельчатую и древовидную обрезайте ранней весной. У крупнолистной только удаляйте старые соцветия и сухие побеги.", "Метельчатая и древовидная зимостойкие. Крупнолистную укройте сухими листьями и спанбондом или держите в месте без морозов."],
+  ["Spiraea", "Спирея", "Молодые растения поливайте в сухую погоду. Взрослым кустам полив почти не нужен.", "Весеннецветущие обрезайте после цветения, летнецветущие — ранней весной.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Forsythia", "Форзиция", "Поливайте в сухую погоду, пока растение молодое.", "Обрезайте сразу после цветения. Удаляйте у основания часть старых ветвей.", "Выбирайте зимостойкие сорта. В суровые зимы цветочные почки выше уровня снега могут вымерзнуть."],
+  ["Rhododendron", "Рододендрон", "Держите кислую почву равномерно влажной, лучше поливать дождевой водой. Хорошо полейте осенью перед морозами.", "Выламывайте отцветшие соцветия. После цветения обрезайте только слегка.", "Мульчируйте сосновой хвоей или корой. Вечнозелёные виды притеняйте спанбондом от солнца в конце зимы."],
+  ["Clematis", "Клематис", "Обильно поливайте раз в неделю в сухую погоду. Держите корни в прохладе с помощью мульчи или низких растений.", "Обрезка зависит от группы. Сорта с поздним летним цветением можно ранней весной срезать примерно до 30 см.", "В конце осени замульчируйте основание. Укройте центр куста листьями или еловым лапником."],
+  ["Parthenocissus", "Девичий виноград", "Поливайте молодые растения. Взрослым полив почти не нужен.", "Подрезайте в конце зимы или летом, чтобы он не добрался до водостоков и окон.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Humulus lupulus", "Хмель", "Любит влажную почву. Поливайте в сухую погоду.", "Срезайте все стебли у земли в конце осени или ранней весной.", "Очень зимостойкий. Надземная часть отмирает, весной отрастает от корней."],
 
   // Trees and conifers
-  ["Thuja", "Tūja", "Water young plants deeply each week in dry weather. Water well in autumn before frost.", "Trim in late spring to early summer. Don't cut back into old bare wood.", "Hardy. Tie up upright forms against snow and shade young plants from late-winter sun."],
-  ["Juniperus", "Kadiķis", "Drought tolerant once established. Water young plants in dry spells.", "Trim lightly in spring or summer. Don't cut into old bare wood.", "Very hardy. Shade young plants from late-winter sun."],
-  ["Picea", "Egle", "Likes moist soil. Water young trees in dry spells and before winter.", "Rarely needed. Remove dead branches. Hedges can be trimmed in early summer.", "Very hardy. Knock heavy snow off dwarf forms."],
-  ["Pinus", "Priede", "Tolerates dry, sandy soil. Water only young trees.", "To keep it compact, shorten new candles by half in late spring.", "Very hardy. No protection needed."],
-  ["Betula", "Bērzs", "Water young trees in dry spells. It uses a lot of water, so nearby plants may need extra.", "Prune only from midsummer to autumn, because it bleeds sap heavily in spring.", "Very hardy. No protection needed."],
-  ["Quercus", "Ozols", "Water young trees in dry spells. Older trees root deeply.", "Prune in late winter only to remove damaged or crossing branches.", "Very hardy. Protect young trees from deer and hares."],
-  ["Tilia", "Liepa", "Water young trees in dry spells.", "Prune in late winter. Tolerates hard pruning and shaping.", "Very hardy. No protection needed."],
-  ["Acer", "Kļava", "Water young trees in dry spells. Older trees manage on rain.", "Prune from late summer to autumn, because it bleeds sap in spring.", "Native maple is very hardy. Protect ornamental Japanese maples with fleece and mulch."],
-  ["Fraxinus", "Osis", "Likes moist soil. Water young trees in dry spells.", "Prune in late winter only when needed. Have dying branches over paths checked, because ash dieback is common.", "Very hardy. No protection needed."],
-  ["Populus", "Apse", "Water young trees in dry spells.", "Prune in late winter. Remove root suckers.", "Very hardy. No protection needed."],
-  ["Alnus", "Alksnis", "Likes wet soil. Water only young plants in drought.", "Prune in late winter only when needed.", "Very hardy. No protection needed."],
-  ["Salix", "Vītols", "Likes moist soil. Water in dry spells. Keep it away from drains.", "Prune hard in late winter if needed. It regrows quickly.", "Very hardy. No protection needed."],
-  ["Ulmus", "Goba", "Water young trees in dry spells.", "Prune in late winter only when needed.", "Very hardy. No protection needed."],
-  ["Aesculus hippocastanum", "Zirgkastaņa", "Water young trees in dry spells.", "Prune in winter only to remove damaged branches. Rake and remove fallen leaves in autumn to reduce leaf miner.", "Hardy. No protection needed once established."],
+  ["Thuja", "Туя", "Молодые растения обильно поливайте раз в неделю в сухую погоду. Хорошо полейте осенью перед морозами.", "Подстригайте с конца весны до начала лета. Не срезайте до старой голой древесины.", "Зимостойкая. Колоновидные формы связывайте от снега, молодые растения притеняйте от солнца в конце зимы."],
+  ["Juniperus", "Можжевельник", "Прижившись, переносит засуху. Молодые растения поливайте в сухую погоду.", "Слегка подстригайте весной или летом. Не срезайте до старой голой древесины.", "Очень зимостойкий. Молодые растения притеняйте от солнца в конце зимы."],
+  ["Picea", "Ель", "Любит влажную почву. Молодые деревья поливайте в сухую погоду и перед зимой.", "Обычно не нужна. Удаляйте сухие ветки. Живую изгородь можно подстригать в начале лета.", "Очень зимостойкая. С карликовых форм стряхивайте тяжёлый снег."],
+  ["Pinus", "Сосна", "Переносит сухую песчаную почву. Поливайте только молодые деревья.", "Для компактности в конце весны укорачивайте молодые побеги-свечи наполовину.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Betula", "Берёза", "Молодые деревья поливайте в сухую погоду. Берёза потребляет много воды, соседним растениям может понадобиться дополнительный полив.", "Обрезайте только с середины лета до осени, потому что весной она сильно истекает соком.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Quercus", "Дуб", "Молодые деревья поливайте в сухую погоду. У взрослых глубокие корни.", "Обрезайте в конце зимы, только чтобы убрать повреждённые или перекрещивающиеся ветки.", "Очень зимостойкий. Защищайте молодые деревья от оленей и зайцев."],
+  ["Tilia", "Липа", "Молодые деревья поливайте в сухую погоду.", "Обрезайте в конце зимы. Хорошо переносит сильную обрезку и формирование.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Acer", "Клён", "Молодые деревья поливайте в сухую погоду. Взрослым хватает дождя.", "Обрезайте с конца лета до осени, потому что весной клён истекает соком.", "Местный клён очень зимостойкий. Декоративные японские клёны защищайте спанбондом и мульчей."],
+  ["Fraxinus", "Ясень", "Любит влажную почву. Молодые деревья поливайте в сухую погоду.", "Обрезайте в конце зимы только при необходимости. Проверяйте усыхающие ветки над дорожками: некроз ясеня встречается часто.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Populus", "Тополь или осина", "Молодые деревья поливайте в сухую погоду.", "Обрезайте в конце зимы. Удаляйте корневую поросль.", "Очень зимостойкие. Укрытие не нужно."],
+  ["Alnus", "Ольха", "Любит сырую почву. Поливайте только молодые растения в засуху.", "Обрезайте в конце зимы только при необходимости.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Salix", "Ива", "Любит влажную почву. Поливайте в сухую погоду. Не сажайте рядом с дренажом и трубами.", "При необходимости сильно обрезайте в конце зимы. Быстро отрастает.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Ulmus", "Вяз", "Молодые деревья поливайте в сухую погоду.", "Обрезайте в конце зимы только при необходимости.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Aesculus hippocastanum", "Конский каштан", "Молодые деревья поливайте в сухую погоду.", "Обрезайте зимой, только чтобы убрать повреждённые ветки. Осенью сгребайте и убирайте опавшие листья, чтобы уменьшить вред от каштановой минирующей моли.", "Зимостойкий. Прижившимся деревьям укрытие не нужно."],
 
   // Bulbs and perennials
-  ["Tulipa", "Tulpe", "Water only in dry spring weather. Keep bulbs dry in summer.", "Remove faded flowers. Let the leaves yellow before cutting them.", "Plant in September to October at three times the bulb depth. A thin mulch helps in snowless winters."],
-  ["Narcissus", "Narcise", "Water in dry spring weather while in growth and flower.", "Remove faded flowers. Let the leaves die back naturally.", "Hardy. Plant in early autumn. No lifting needed."],
-  ["Hyacinthus", "Hiacinte", "Water in dry spring weather. Keep dry in summer.", "Remove faded flower spikes. Let the leaves yellow.", "Mulch with leaves or peat in late autumn and remove it in spring."],
-  ["Crocus", "Krokuss", "Rarely needs watering. Rain is usually enough.", "No pruning. Let the leaves die back naturally.", "Hardy. No protection needed."],
-  ["Galanthus", "Sniegpulkstenīte", "Keep slightly moist in spring. No watering needed in summer.", "No pruning. Let the leaves die back naturally.", "Very hardy. No protection needed."],
-  ["Lilium", "Lilija", "Water at the base in dry weather. Avoid waterlogging.", "Remove faded flowers. Cut stems only after they yellow in autumn.", "Most types are hardy. Mulch in late autumn, and give tender types extra cover."],
-  ["Gladiolus", "Gladiola", "Water deeply weekly in dry weather.", "Cut faded spikes, leaving the leaves to feed the corm.", "Not hardy. Lift corms in early autumn and store them dry and cool at 5 to 10 °C."],
-  ["Dahlia", "Dālija", "Water deeply 1 to 2 times a week in dry weather.", "Pinch young plants for bushiness. Remove faded flowers.", "Not hardy. After the first frost, cut back, lift the tubers and store them frost-free at about 5 °C."],
-  ["Paeonia", "Peonija", "Water deeply in dry spells, especially in spring and in August.", "Remove faded flowers. Cut herbaceous stems to the ground in autumn.", "Very hardy. Don't plant too deep, with buds no more than 3 to 5 cm below soil."],
-  ["Iris", "Īriss", "Water in dry spells during spring and after flowering. Bearded irises dislike wet soil.", "Cut faded flower stems. Trim leaves back to a fan in late summer.", "Hardy. Keep bearded iris rhizomes near the surface and don't cover them with wet mulch."],
-  ["Hemerocallis", "Dienziede", "Water in dry spells, especially at flowering.", "Remove faded flower stems. Cut old leaves in autumn or spring.", "Very hardy. No protection needed."],
-  ["Phlox", "Floksis", "Water at the base weekly in dry weather. Mulch well.", "Remove faded flowers. Cut tall types to near the ground in autumn.", "Very hardy. No protection needed."],
-  ["Hosta", "Funkija", "Likes moist soil. Water weekly in dry weather, especially in sun.", "Remove faded flower stems. Clear dead leaves in autumn or spring.", "Very hardy. No protection needed."],
-  ["Astilbe", "Astilbe", "Keep constantly moist. It wilts quickly in dry soil.", "Leave faded flower heads for winter interest if you like. Cut back in early spring.", "Hardy. Mulch shallow roots in autumn."],
-  ["Lamprocapnos", "Sirdspuķe", "Keep moist in spring. Water in dry spells.", "Cut back yellowing stems after flowering.", "Very hardy. No protection needed."],
-  ["Aquilegia", "", "Water in dry spells. Tolerates some drought.", "Remove faded flowers unless you want seedlings. Cut back in autumn.", "Very hardy. No protection needed."],
-  ["Echinacea", "Ehinācija", "Water young plants. Established plants tolerate drought.", "Remove faded flowers for more blooms. Cut back in early spring.", "Hardy. Avoid wet soil in winter."],
-  ["Convallaria majalis", "Maijpuķīte", "Likes moist shade. Water in dry spells.", "Clear dead leaves in autumn. Thin spreading patches when needed.", "Very hardy. All parts are poisonous, including the berries."],
-  ["Leucanthemum", "Pīpene", "Water in dry spells while flowering. Tolerates some drought.", "Remove faded flowers. Cut back in autumn.", "Very hardy. No protection needed."],
-  ["Primula", "Prīmula", "Keep moist, especially in spring and in dry spells.", "Remove faded flowers and old leaves.", "Most types are hardy. Mulch lightly in snowless winters."],
-  ["Viola", "Vijolīte", "Water in dry spells and keep pot plants evenly moist.", "Remove faded flowers for more blooms.", "Hardy. Garden pansies may need light cover in snowless frost."],
-  ["Hepatica nobilis", "Zilā vizbulīte", "Likes shade and moist woodland soil. Water in dry spells.", "No pruning. Protected in the wild in places, so don't dig it up there.", "Very hardy. Leave fallen leaves on as natural mulch."],
-  ["Anemone nemorosa", "Baltais vizbulis", "Likes moist woodland soil in spring. It's dormant and needs no water in summer.", "No pruning needed.", "Very hardy. Leave fallen leaves on as natural mulch."],
+  ["Tulipa", "Тюльпан", "Поливайте только в сухую весеннюю погоду. Летом луковицы должны оставаться сухими.", "Удаляйте отцветшие цветки. Срезайте листья только после пожелтения.", "Сажайте в сентябре–октябре на глубину трёх высот луковицы. В малоснежные зимы поможет тонкий слой мульчи."],
+  ["Narcissus", "Нарцисс", "Поливайте в сухую весеннюю погоду во время роста и цветения.", "Удаляйте отцветшие цветки. Дайте листьям отмереть естественно.", "Зимостойкий. Сажайте в начале осени. Выкапывать не нужно."],
+  ["Hyacinthus", "Гиацинт", "Поливайте в сухую весеннюю погоду. Летом держите сухим.", "Удаляйте отцветшие цветоносы. Дайте листьям пожелтеть.", "В конце осени замульчируйте листьями или торфом, весной уберите мульчу."],
+  ["Crocus", "Крокус", "Полив нужен редко. Обычно хватает дождя.", "Обрезка не нужна. Дайте листьям отмереть естественно.", "Зимостойкий. Укрытие не нужно."],
+  ["Galanthus", "Подснежник", "Весной держите почву слегка влажной. Летом полив не нужен.", "Обрезка не нужна. Дайте листьям отмереть естественно.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Lilium", "Лилия", "Поливайте под корень в сухую погоду. Избегайте застоя воды.", "Удаляйте отцветшие цветки. Стебли срезайте только после пожелтения осенью.", "Большинство видов зимостойкие. В конце осени замульчируйте, нежные сорта укройте дополнительно."],
+  ["Gladiolus", "Гладиолус", "Обильно поливайте раз в неделю в сухую погоду.", "Срезайте отцветшие цветоносы, оставляя листья для питания клубнелуковицы.", "Не зимует в грунте. В начале осени выкопайте клубнелуковицы и храните в сухом прохладном месте при 5–10 °C."],
+  ["Dahlia", "Георгин", "Обильно поливайте 1–2 раза в неделю в сухую погоду.", "Прищипывайте молодые растения для густоты. Удаляйте отцветшие цветки.", "Не зимует в грунте. После первых заморозков обрежьте, выкопайте клубни и храните без мороза примерно при 5 °C."],
+  ["Paeonia", "Пион", "Обильно поливайте в сухую погоду, особенно весной и в августе.", "Удаляйте отцветшие цветки. Осенью срезайте стебли травянистых пионов у земли.", "Очень зимостойкий. Не заглубляйте при посадке: почки должны быть не глубже 3–5 см."],
+  ["Iris", "Ирис", "Поливайте в сухую погоду весной и после цветения. Бородатые ирисы не любят сырую почву.", "Срезайте отцветшие цветоносы. В конце лета подрезайте листья веером.", "Зимостойкий. Корневища бородатых ирисов держите у поверхности и не укрывайте сырой мульчей."],
+  ["Hemerocallis", "Лилейник", "Поливайте в сухую погоду, особенно при цветении.", "Удаляйте отцветшие цветоносы. Старые листья срезайте осенью или весной.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Phlox", "Флокс", "Поливайте под корень раз в неделю в сухую погоду. Хорошо мульчируйте.", "Удаляйте отцветшие соцветия. Осенью срезайте высокие виды почти у земли.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Hosta", "Хоста", "Любит влажную почву. Поливайте раз в неделю в сухую погоду, особенно на солнце.", "Удаляйте отцветшие цветоносы. Убирайте сухие листья осенью или весной.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Astilbe", "Астильба", "Держите почву постоянно влажной. В сухой почве быстро вянет.", "Отцветшие соцветия можно оставить на зиму для красоты. Обрезайте ранней весной.", "Зимостойкая. Осенью замульчируйте неглубокие корни."],
+  ["Lamprocapnos", "Дицентра (разбитое сердце)", "Весной держите почву влажной. Поливайте в сухую погоду.", "После цветения срезайте желтеющие стебли.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Aquilegia", "Водосбор (аквилегия)", "Поливайте в сухую погоду. Переносит небольшую засуху.", "Удаляйте отцветшие цветки, если не нужны всходы. Осенью обрезайте.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Echinacea", "Эхинацея", "Поливайте молодые растения. Прижившиеся переносят засуху.", "Удаляйте отцветшие цветки для нового цветения. Обрезайте ранней весной.", "Зимостойкая. Избегайте сырой почвы зимой."],
+  ["Convallaria majalis", "Ландыш майский", "Любит влажную тень. Поливайте в сухую погоду.", "Осенью убирайте сухие листья. При необходимости прореживайте разросшиеся куртины.", "Очень зимостойкий. Все части растения ядовиты, включая ягоды."],
+  ["Leucanthemum", "Нивяник (садовая ромашка)", "Поливайте в сухую погоду при цветении. Переносит небольшую засуху.", "Удаляйте отцветшие цветки. Осенью обрезайте.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Primula", "Примула", "Держите почву влажной, особенно весной и в сухую погоду.", "Удаляйте отцветшие цветки и старые листья.", "Большинство видов зимостойкие. В малоснежные зимы слегка замульчируйте."],
+  ["Viola", "Фиалка", "Поливайте в сухую погоду, в горшках держите почву равномерно влажной.", "Удаляйте отцветшие цветки для нового цветения.", "Зимостойкая. Садовым анютиным глазкам может понадобиться лёгкое укрытие в бесснежный мороз."],
+  ["Hepatica nobilis", "Печёночница благородная", "Любит тень и влажную лесную почву. Поливайте в сухую погоду.", "Обрезка не нужна. В природе местами охраняется, поэтому не выкапывайте её там.", "Очень зимостойкая. Оставляйте опавшие листья как естественную мульчу."],
+  ["Anemone nemorosa", "Ветреница дубравная", "Весной любит влажную лесную почву. Летом находится в покое, и полив не нужен.", "Обрезка не нужна.", "Очень зимостойкая. Оставляйте опавшие листья как естественную мульчу."],
 
   // Summer flowers
-  ["Petunia", "Petūnija", "Water pots daily in hot weather, in the ground when dry.", "Remove faded flowers. Pinch back long stems for bushiness.", "Grown as an annual. It dies at frost, so plant out only after late May frosts."],
-  ["Tagetes", "Samtene", "Water when soil is dry. Avoid wetting the leaves.", "Remove faded flowers.", "Annual. Plant out after late May frosts and sow again next year."],
-  ["Calendula", "Kliņģerīte", "Water in dry spells.", "Remove faded flowers for more blooms.", "Annual. It usually self-seeds for next year."],
-  ["Tropaeolum", "Krese", "Water in dry spells. Too much feeding gives leaves rather than flowers.", "Remove faded flowers and trim long stems.", "Annual. Sow again after late May frosts."],
-  ["Helianthus annuus", "Saulespuķe", "Water deeply in dry spells, especially at flowering.", "No pruning. Stake tall plants.", "Annual. Leave some seed heads for birds."],
-  ["Papaver", "Magone", "Tolerates dry soil. Water only in long droughts.", "Remove faded flowers unless you want seed.", "Annual types self-seed. Perennial oriental poppy is hardy."],
-  ["Centaurea cyanus", "Rudzupuķe", "Tolerates dry soil. Water only in long droughts.", "Remove faded flowers for more blooms.", "Annual. Sow in spring or autumn, and it often self-seeds."],
-  ["Pelargonium", "Pelargonija", "Let the top soil dry between waterings. Water sparingly in winter.", "Remove faded flowers. Cut back by about a third in early spring.", "Not hardy. Bring indoors before frost and keep bright and cool at 8 to 12 °C."],
+  ["Petunia", "Петуния", "В жару поливайте горшки ежедневно, в грунте — когда почва сухая.", "Удаляйте отцветшие цветки. Прищипывайте длинные стебли для густоты.", "Выращивается как однолетник и гибнет от мороза. Высаживайте только после поздних майских заморозков."],
+  ["Tagetes", "Бархатцы", "Поливайте, когда почва сухая. Не мочите листья.", "Удаляйте отцветшие цветки.", "Однолетник. Высаживайте после поздних майских заморозков и сейте снова на следующий год."],
+  ["Calendula", "Календула (ноготки)", "Поливайте в сухую погоду.", "Удаляйте отцветшие цветки для нового цветения.", "Однолетник. Обычно на следующий год вырастает самосевом."],
+  ["Tropaeolum", "Настурция", "Поливайте в сухую погоду. От избытка удобрений даёт больше листьев, чем цветков.", "Удаляйте отцветшие цветки и подрезайте длинные стебли.", "Однолетник. Сейте снова после поздних майских заморозков."],
+  ["Helianthus annuus", "Подсолнечник", "Обильно поливайте в сухую погоду, особенно при цветении.", "Обрезка не нужна. Высокие растения подвязывайте.", "Однолетник. Часть соцветий с семенами оставьте для птиц."],
+  ["Papaver", "Мак", "Переносит сухую почву. Поливайте только в долгую засуху.", "Удаляйте отцветшие цветки, если не нужны семена.", "Однолетние виды дают самосев. Многолетний восточный мак зимостойкий."],
+  ["Centaurea cyanus", "Василёк синий", "Переносит сухую почву. Поливайте только в долгую засуху.", "Удаляйте отцветшие цветки для нового цветения.", "Однолетник. Сейте весной или осенью, часто даёт самосев."],
+  ["Pelargonium", "Пеларгония (герань)", "Между поливами давайте верхнему слою почвы просохнуть. Зимой поливайте умеренно.", "Удаляйте отцветшие цветки. Ранней весной укорачивайте примерно на треть.", "Не зимует в грунте. До морозов занесите в дом и держите в светлом прохладном месте при 8–12 °C."],
 
   // Wild flowers and common weeds
-  ["Matricaria chamomilla", "Kumelīte", "Rarely needs water. Water only in long droughts.", "No pruning. Harvest flowers as they open.", "Annual. It self-seeds."],
-  ["Achillea millefolium", "Pelašķi", "Very drought tolerant. Rarely needs watering.", "Cut faded flowers. Cut back in autumn or spring.", "Very hardy. No protection needed."],
-  ["Tanacetum vulgare", "Biškrēsliņi", "Very drought tolerant. Rarely needs watering.", "Cut faded flowers to prevent spreading. Cut back in autumn.", "Very hardy. No protection needed."],
-  ["Urtica dioica", "Nātre", "Needs no watering. Thrives in rich, damp soil.", "Cut before it seeds to control it. Wear gloves.", "Very hardy. It regrows from the roots."],
-  ["Taraxacum", "Pienene", "Needs no watering.", "Remove flowers before seeds form if you don't want it to spread. Dig out the whole root to remove it.", "Very hardy. No protection needed."],
-  ["Trifolium", "Āboliņš", "Rarely needs watering.", "Mow or cut after flowering.", "Very hardy. No protection needed."],
+  ["Matricaria chamomilla", "Ромашка аптечная", "Полив нужен редко. Поливайте только в долгую засуху.", "Обрезка не нужна. Собирайте цветки по мере раскрытия.", "Однолетник. Даёт самосев."],
+  ["Achillea millefolium", "Тысячелистник", "Очень засухоустойчивый. Полив нужен редко.", "Срезайте отцветшие соцветия. Обрезайте осенью или весной.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Tanacetum vulgare", "Пижма", "Очень засухоустойчивая. Полив нужен редко.", "Срезайте отцветшие соцветия, чтобы не разрасталась. Осенью обрезайте.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Urtica dioica", "Крапива двудомная", "Полив не нужен. Хорошо растёт на богатой сырой почве.", "Чтобы сдержать рост, срезайте до образования семян. Надевайте перчатки.", "Очень зимостойкая. Отрастает от корней."],
+  ["Taraxacum", "Одуванчик", "Полив не нужен.", "Удаляйте цветки до образования семян, если не хотите, чтобы он распространялся. Чтобы избавиться от него, выкопайте весь корень.", "Очень зимостойкий. Укрытие не нужно."],
+  ["Trifolium", "Клевер", "Полив нужен редко.", "Скашивайте или срезайте после цветения.", "Очень зимостойкий. Укрытие не нужно."],
 
   // Herbs and vegetables
-  ["Lavandula", "Lavanda", "Water young plants. Established plants like dry soil, so don't overwater.", "After flowering, trim faded stems. Shape lightly in spring, but don't cut into old wood.", "Needs a sunny, well-drained spot. Cover with spruce branches, and avoid wet soil in winter."],
-  ["Mentha", "Piparmētra", "Keep moist and water in dry spells.", "Cut often to keep it bushy. Grow it in a pot or bed edging because it spreads.", "Very hardy. No protection needed."],
-  ["Melissa officinalis", "Melise", "Water in dry spells.", "Cut back after flowering for fresh leaves.", "Hardy. Mulch in snowless winters."],
-  ["Salvia", "Salvija", "Let soil dry between waterings. Avoid wet soil.", "Cut back lightly after flowering. Trim woody types in spring.", "Garden sage may need spruce branches over it. Tender ornamental types are annual here."],
-  ["Thymus", "Timiāns", "Drought tolerant. Water only in long dry spells.", "Trim after flowering to keep it compact.", "Hardy in well-drained soil. Cover lightly in snowless frost."],
-  ["Anethum graveolens", "Dilles", "Water in dry weather to stop early flowering.", "No pruning. Pick leaves as needed.", "Annual. Sow again every few weeks."],
-  ["Petroselinum crispum", "Pētersīļi", "Keep evenly moist.", "Pick outer leaves first. Remove flower stems.", "Biennial. It can survive winter with mulch or be potted indoors."],
-  ["Solanum lycopersicum", "Tomāts", "Water deeply and evenly at the base, about 2 to 3 times a week. Uneven watering causes cracks and rot.", "Remove side shoots on tall varieties. Remove lower leaves as they yellow.", "Annual. Plant out after late May frosts, or grow in a greenhouse."],
-  ["Cucumis sativus", "Gurķis", "Water often with lukewarm water. Keep soil constantly moist.", "Train up supports and pinch side shoots as the variety requires.", "Annual. Plant out after late May frosts, or grow in a greenhouse."],
-  ["Cucurbita", "Ķirbis", "Water deeply weekly at the base, more when fruiting.", "Pinch long vines after several fruits set.", "Annual. Plant out after late May frosts and harvest before autumn frost."],
+  ["Lavandula", "Лаванда", "Поливайте молодые растения. Прижившиеся любят сухую почву, не переливайте.", "После цветения срезайте отцветшие стебли. Весной слегка подравнивайте, но не срезайте до старой древесины.", "Нужно солнечное место с хорошим дренажом. Укройте еловым лапником, избегайте сырой почвы зимой."],
+  ["Mentha", "Мята", "Держите почву влажной и поливайте в сухую погоду.", "Часто срезайте для густоты. Выращивайте в горшке или с ограничителем: она сильно разрастается.", "Очень зимостойкая. Укрытие не нужно."],
+  ["Melissa officinalis", "Мелисса", "Поливайте в сухую погоду.", "После цветения обрежьте, чтобы выросли свежие листья.", "Зимостойкая. В малоснежные зимы замульчируйте."],
+  ["Salvia", "Шалфей", "Между поливами давайте почве просохнуть. Избегайте сырости.", "После цветения слегка обрежьте. Одревесневающие виды подравнивайте весной.", "Садовый шалфей может нуждаться в укрытии лапником. Нежные декоративные виды здесь растут как однолетники."],
+  ["Thymus", "Тимьян (чабрец)", "Засухоустойчивый. Поливайте только в долгую сухую погоду.", "После цветения подстригайте для компактности.", "Зимостойкий на дренированной почве. В бесснежный мороз слегка укройте."],
+  ["Anethum graveolens", "Укроп", "Поливайте в сухую погоду, чтобы он не зацвёл раньше времени.", "Обрезка не нужна. Срывайте листья по мере надобности.", "Однолетник. Подсевайте снова каждые несколько недель."],
+  ["Petroselinum crispum", "Петрушка", "Держите почву равномерно влажной.", "Сначала срывайте внешние листья. Удаляйте цветоносы.", "Двулетник. Может перезимовать под мульчей, или пересадите в горшок и занесите в дом."],
+  ["Solanum lycopersicum", "Томат (помидор)", "Обильно и равномерно поливайте под корень примерно 2–3 раза в неделю. От неравномерного полива плоды трескаются и загнивают.", "У высоких сортов удаляйте пасынки. Нижние листья удаляйте по мере пожелтения.", "Однолетник. Высаживайте после поздних майских заморозков или выращивайте в теплице."],
+  ["Cucumis sativus", "Огурец", "Часто поливайте тёплой водой. Держите почву постоянно влажной.", "Подвязывайте к опорам и прищипывайте боковые побеги в зависимости от сорта.", "Однолетник. Высаживайте после поздних майских заморозков или выращивайте в теплице."],
+  ["Cucurbita", "Тыква", "Обильно поливайте под корень раз в неделю, чаще при плодоношении.", "Прищипните длинные плети после завязывания нескольких плодов.", "Однолетник. Высаживайте после поздних майских заморозков и убирайте урожай до осенних заморозков."],
 
   // House plants
-  ["Aloe", "Alveja", "Water when the soil is fully dry, every 2 to 4 weeks. Water less in winter.", "Cut damaged leaves at the base. Remove offsets to repot them.", "House plant. Keep bright and above about 10 °C."],
-  ["Phalaenopsis", "Orhideja", "Water about once a week, then drain fully. Never leave it standing in water.", "Cut faded flower spikes above a node, or at the base if they turn brown.", "House plant. Keep bright and above about 16 °C, away from cold glass."],
-  ["Spathiphyllum", "Spatifils", "Keep soil lightly moist. Drooping leaves mean it needs water.", "Cut faded flower stems and yellow leaves at the base.", "House plant. Keep above about 15 °C and away from drafts."],
-  ["Chlorophytum comosum", "Hlorofīts", "Water when the top soil is dry. Water less in winter.", "Cut brown tips and old leaves. Pot up the baby plants.", "House plant. Keep above about 10 °C."],
-  ["Monstera", "Monstera", "Water when the top few centimetres of soil are dry. Water less in winter.", "Cut yellow leaves. Trim long stems in spring if needed.", "House plant. Keep bright and above about 15 °C."],
-  ["Crassula ovata", "Naudaskoks", "Let soil dry fully between waterings. Water rarely in winter.", "Trim in spring to shape it. Cuttings root easily.", "House plant. Keep bright and above about 5 °C."],
-  ["Dracaena", "Dracēna", "Let the top half of the soil dry. Water rarely in winter.", "Cut brown leaves. Tall stems can be cut back in spring.", "House plant. Keep above about 13 °C."],
-  ["Ficus", "Fikuss", "Water when the top soil is dry. Avoid overwatering.", "Trim in spring. Wear gloves because the sap irritates skin.", "House plant. Keep bright and above about 15 °C, away from drafts."],
+  ["Aloe", "Алоэ", "Поливайте, когда почва полностью просохнет, раз в 2–4 недели. Зимой поливайте реже.", "Срезайте повреждённые листья у основания. Детки можно отсадить.", "Комнатное растение. Держите в светлом месте при температуре выше 10 °C."],
+  ["Phalaenopsis", "Орхидея фаленопсис", "Поливайте примерно раз в неделю и давайте воде полностью стечь. Не оставляйте в воде.", "Срезайте отцветшие цветоносы над узлом или у основания, если они побурели.", "Комнатное растение. Держите в светлом месте при температуре выше 16 °C, вдали от холодного стекла."],
+  ["Spathiphyllum", "Спатифиллум", "Держите почву слегка влажной. Поникшие листья значат, что нужен полив.", "Срезайте отцветшие цветоносы и жёлтые листья у основания.", "Комнатное растение. Держите при температуре выше 15 °C, без сквозняков."],
+  ["Chlorophytum comosum", "Хлорофитум", "Поливайте, когда просохнет верхний слой почвы. Зимой поливайте реже.", "Срезайте бурые кончики и старые листья. Детки можно посадить в горшки.", "Комнатное растение. Держите при температуре выше 10 °C."],
+  ["Monstera", "Монстера", "Поливайте, когда верхние несколько сантиметров почвы просохнут. Зимой поливайте реже.", "Срезайте жёлтые листья. При необходимости весной укорачивайте длинные стебли.", "Комнатное растение. Держите в светлом месте при температуре выше 15 °C."],
+  ["Crassula ovata", "Толстянка (денежное дерево)", "Между поливами давайте почве полностью просохнуть. Зимой поливайте редко.", "Весной формируйте обрезкой. Черенки легко укореняются.", "Комнатное растение. Держите в светлом месте при температуре выше 5 °C."],
+  ["Dracaena", "Драцена", "Давайте просохнуть верхней половине почвы. Зимой поливайте редко.", "Срезайте бурые листья. Высокие стволы можно укоротить весной.", "Комнатное растение. Держите при температуре выше 13 °C."],
+  ["Ficus", "Фикус", "Поливайте, когда просохнет верхний слой почвы. Не переливайте.", "Обрезайте весной. Надевайте перчатки: сок раздражает кожу.", "Комнатное растение. Держите в светлом месте при температуре выше 15 °C, без сквозняков."],
 ];
 const CARE_INDEX = new Map(CARE.map(row => [row[0].toLowerCase(), row]));
 
@@ -337,7 +337,7 @@ async function startCamera() {
     stream = null;
     $("shoot").disabled = true;
     $("reticle").hidden = true;
-    $("cameraNote").textContent = "The camera is blocked. Allow camera access in Safari's aA menu and reload, or tap Photos to use a picture.";
+    $("cameraNote").textContent = "Камера заблокирована. Разрешите доступ к камере в меню «аА» в Safari и перезагрузите страницу или нажмите «Фото», чтобы выбрать снимок.";
     $("cameraNote").hidden = false;
   }
 }
@@ -375,7 +375,7 @@ $("file").onchange = () => {
   const url = URL.createObjectURL(f);
   const img = new Image();
   img.onload = () => { const data = toJpeg(img, img.naturalWidth, img.naturalHeight); URL.revokeObjectURL(url); identify(data); };
-  img.onerror = () => { URL.revokeObjectURL(url); showMessage("That file can't be opened", "Choose a JPEG, PNG or HEIC photo instead.", null); };
+  img.onerror = () => { URL.revokeObjectURL(url); showMessage("Не удалось открыть файл", "Выберите фото в формате JPEG, PNG или HEIC.", null); };
   img.src = url;
 };
 
@@ -388,15 +388,19 @@ async function askPlantNet(dataUrl, key) {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), TIMEOUT_MS);
   try {
-    const url = "https://my-api.plantnet.org/v2/identify/all?nb-results=4&lang=en&api-key=" + encodeURIComponent(key);
-    const res = await fetch(url, { method: "POST", body: form, signal: ctl.signal });
-    const body = await res.json().catch(() => null);
-    if (!res.ok) {
-      const err = new Error(body?.message || `Request failed (${res.status})`);
-      err.status = res.status;
-      throw err;
+    // Russian may not be on Pl@ntNet's language list, so a refusal falls back to English.
+    for (const lang of ["ru", "en"]) {
+      const url = `https://my-api.plantnet.org/v2/identify/all?nb-results=4&lang=${lang}&api-key=` + encodeURIComponent(key);
+      const res = await fetch(url, { method: "POST", body: form, signal: ctl.signal });
+      if (res.status === 400 && lang === "ru") continue;
+      const body = await res.json().catch(() => null);
+      if (!res.ok) {
+        const err = new Error(`Request failed (${res.status})`);
+        err.status = res.status;
+        throw err;
+      }
+      return body;
     }
-    return body;
   } finally {
     clearTimeout(timer);
   }
@@ -416,16 +420,21 @@ async function identify(dataUrl) {
   } catch (e) {
     stopCamera();
     if (e.status === 404) noPlant(dataUrl);
-    else if (e.status === 401 || e.status === 403) showMessage("That key doesn't work here", 'Check the key, tick "expose my API key" and add https://texnonik.github.io under "Authorized domains" in your Pl@ntNet settings.', dataUrl, true);
-    else if (e.status === 429) showMessage("Daily limit reached", "The free plan allows 500 scans a day. Try again tomorrow.", dataUrl);
-    else if (e.name === "AbortError") showMessage("This is taking too long", "Check your internet connection and try again.", dataUrl);
-    else if (e instanceof TypeError) showMessage("Can't reach Pl@ntNet", "Check your internet connection and try again.", dataUrl);
-    else showMessage("Couldn't identify this plant", e.message, dataUrl);
+    else if (e.status === 401 || e.status === 403) showMessage("Этот ключ здесь не работает", "Проверьте ключ, поставьте галочку «expose my API key» и добавьте https://texnonik.github.io в раздел «Authorized domains» в настройках Pl@ntNet.", dataUrl, true);
+    else if (e.status === 429) showMessage("Дневной лимит исчерпан", "Бесплатный тариф позволяет делать 500 определений в день. Попробуйте завтра.", dataUrl);
+    else if (e.name === "AbortError") showMessage("Это занимает слишком много времени", "Проверьте подключение к интернету и попробуйте ещё раз.", dataUrl);
+    else if (e instanceof TypeError) showMessage("Нет связи с Pl@ntNet", "Проверьте подключение к интернету и попробуйте ещё раз.", dataUrl);
+    else showMessage("Не удалось определить растение", "Сервис Pl@ntNet ответил ошибкой. Попробуйте ещё раз чуть позже.", dataUrl);
   }
 }
 
 function noPlant(dataUrl) {
-  showMessage("No plant found", "Move closer so one leaf or flower fills the frame, then try again.", dataUrl);
+  showMessage("Растение не найдено", "Подойдите ближе, чтобы один лист или цветок заполнил кадр, и попробуйте ещё раз.", dataUrl);
+}
+
+// Only Russian common names are shown; otherwise the Latin name is used.
+function russianName(species) {
+  return species.commonNames?.find(n => /[А-Яа-яЁё]/.test(n));
 }
 
 function showResult(results, dataUrl) {
@@ -433,17 +442,17 @@ function showResult(results, dataUrl) {
   const species = best.species;
   const latin = species.scientificNameWithoutAuthor;
   const care = findCare(latin);
-  const englishName = species.commonNames?.[0];
-  const latvianName = care?.row[1];
+  const name = care?.row[1] || russianName(species) || latin;
   const family = species.family?.scientificNameWithoutAuthor;
 
   $("rImg").src = dataUrl;
-  $("rName").textContent = latvianName || englishName || latin;
+  $("rName").textContent = name;
   $("rLatin").textContent = latin;
-  $("rFamily").textContent = [latvianName && englishName, family && `Family ${family}`].filter(Boolean).join(" · ");
+  $("rLatin").hidden = name === latin;
+  $("rFamily").textContent = family ? `Семейство ${family}` : "";
 
   const level = best.score >= 0.6 ? "high" : best.score >= 0.25 ? "medium" : "low";
-  $("rConf").textContent = { high: "Confident match", medium: "Likely match", low: "Unsure, please double-check" }[level];
+  $("rConf").textContent = { high: "Уверенное совпадение", medium: "Вероятное совпадение", low: "Нет уверенности, проверьте ещё раз" }[level];
   $("rConf").classList.toggle("unsure", level !== "high");
 
   $("rCare").hidden = !care;
@@ -453,14 +462,14 @@ function showResult(results, dataUrl) {
     $("rPrune").textContent = care.row[3];
     $("rWinter").textContent = care.row[4];
   } else {
-    $("rSearch").href = "https://www.google.com/search?q=" + encodeURIComponent(latin + " care");
+    $("rSearch").href = "https://www.google.com/search?q=" + encodeURIComponent(latin + " уход");
   }
   $("rGroup").hidden = !care?.group;
-  $("rGroup").textContent = care?.group ? `This is general advice for the ${care.row[0]} group. Your variety may differ.` : "";
+  $("rGroup").textContent = care?.group ? `Это общие советы для рода ${care.row[0]}. Для вашего сорта уход может отличаться.` : "";
 
-  const others = results.slice(1).filter(r => r.score >= 0.05).map(r => r.species.commonNames?.[0] || r.species.scientificNameWithoutAuthor);
+  const others = results.slice(1).filter(r => r.score >= 0.05).map(r => findCare(r.species.scientificNameWithoutAuthor)?.row[1] || russianName(r.species) || r.species.scientificNameWithoutAuthor);
   $("rAlt").hidden = !others.length;
-  $("rAlt").textContent = others.length ? `It could also be: ${others.join(", ")}.` : "";
+  $("rAlt").textContent = others.length ? `Также это может быть: ${others.join(", ")}.` : "";
 
   show("result");
   $("result").scrollTop = 0;
@@ -488,7 +497,7 @@ $("keyForm").onsubmit = e => {
   e.preventDefault();
   const value = $("keyInput").value.trim();
   if (!value || value.startsWith("sk-ant-")) {
-    $("keyErr").textContent = value ? "That's a Claude key. This app needs your free Pl@ntNet key." : "Paste your Pl@ntNet key first.";
+    $("keyErr").textContent = value ? "Это ключ Claude. Для этого приложения нужен бесплатный ключ Pl@ntNet." : "Сначала вставьте ключ Pl@ntNet.";
     $("keyErr").hidden = false;
     return;
   }
