@@ -93,7 +93,7 @@ a { color: var(--moss); overflow-wrap: anywhere; }
   <div class="bar">
     <button class="side" id="pick" type="button">Photos</button>
     <button class="shutter" id="shoot" type="button" aria-label="Take photo and identify plant" disabled></button>
-    <button class="side right" id="keyBtn" type="button">API key</button>
+    <button class="side right" id="keyBtn" type="button">Key</button>
   </div>
   <input id="file" type="file" accept="image/*" hidden>
 </div>
@@ -115,13 +115,16 @@ a { color: var(--moss); overflow-wrap: anywhere; }
       <p class="family" id="rFamily"></p>
       <span class="pill" id="rConf"></span>
     </div>
-    <div class="care">
+    <div class="care" id="rCare">
       <section><h2>Watering</h2><p id="rWater"></p></section>
       <section><h2>Pruning</h2><p id="rPrune"></p></section>
       <section><h2>Wintering</h2><p id="rWinter"></p></section>
     </div>
+    <p id="rMissing" style="margin:0" hidden>This plant isn't in the care guide yet. <a id="rSearch" target="_blank" rel="noopener">Search the web for care advice</a></p>
+    <p class="note" id="rGroup" hidden></p>
     <p class="note" id="rAlt" hidden></p>
     <button class="primary" id="again" type="button">Scan another plant</button>
+    <p class="note">Identified with Pl@ntNet. Care advice is a general guide for Latvia's climate. Don't eat a plant or use it as medicine based on this app.</p>
   </div>
 </div>
 
@@ -131,7 +134,7 @@ a { color: var(--moss); overflow-wrap: anywhere; }
     <h1 id="mTitle"></h1>
     <p id="mText" style="margin:0"></p>
     <button class="primary" id="mAgain" type="button">Try again</button>
-    <button class="secondary" id="mKey" type="button" hidden>Change API key</button>
+    <button class="secondary" id="mKey" type="button" hidden>Change key</button>
   </div>
 </div>
 
@@ -139,31 +142,170 @@ a { color: var(--moss); overflow-wrap: anywhere; }
   <form class="page" id="keyForm">
     <div>
       <div class="eyebrow">One-time setup</div>
-      <h1>Add your Claude API key</h1>
+      <h1>Add your free Pl@ntNet key</h1>
     </div>
     <ol>
-      <li>Open <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com/settings/keys</a></li>
-      <li>Create a key and add a little credit. Each scan costs a few cents.</li>
-      <li>Paste the key below.</li>
+      <li>Create a free account at <a href="https://my.plantnet.org/" target="_blank" rel="noopener">my.plantnet.org</a></li>
+      <li>Open <a href="https://my.plantnet.org/settings/api-key" target="_blank" rel="noopener">your API key settings</a> and tick "expose my API key".</li>
+      <li>Under "Authorized domains", add <strong>https://texnonik.github.io</strong> and save.</li>
+      <li>Copy the key and paste it below.</li>
     </ol>
-    <label for="keyInput">API key
-      <input id="keyInput" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…">
+    <label for="keyInput">Pl@ntNet key
+      <input id="keyInput" type="password" autocomplete="off" autocapitalize="off" spellcheck="false">
     </label>
     <p class="err" id="keyErr" hidden></p>
     <button class="primary" type="submit">Save key</button>
     <button class="secondary" id="keyCancel" type="button">Cancel</button>
-    <p class="note">The key stays on this phone. It is sent only to Anthropic, and your photos go there for identification.</p>
+    <p class="note">The free plan allows 500 scans a day. The key stays on this phone and is sent only to Pl@ntNet, which uses your photos for identification.</p>
   </form>
 </div>
 
 <canvas id="canvas" hidden></canvas>
 
 <script>
+// Care guide for Latvia's climate: [species or genus, Latvian name, watering, pruning, wintering].
+const CARE = [
+  // Fruit and berries
+  ["Malus", "Ābele", "Water young trees weekly in dry spells. Established trees need a deep soak only in long droughts and while fruit swells.", "Prune in March before buds open. Remove dead, crossing and inward branches.", "Hardy. Protect young trunks from hares with mesh and whitewash them in late autumn."],
+  ["Pyrus", "Bumbiere", "Water young trees weekly in dry weather. Give older trees a deep soak in long droughts.", "Prune in March. Thin crowded branches and shorten overly long shoots.", "Choose hardy local varieties. Protect young trunks from hares and frost cracks."],
+  ["Prunus avium", "Saldais ķirsis", "Water weekly while young and during fruit swell. Avoid waterlogged ground.", "Prune lightly just after harvest in summer, not in winter, to reduce disease.", "Less hardy than sour cherry. Plant in a sheltered, sunny spot and protect the young trunk."],
+  ["Prunus cerasus", "Skābais ķirsis", "Water weekly while young and in dry spells during fruiting.", "Prune after harvest. Thin the crown and remove suckers.", "Hardy. Protect young trunks from hares."],
+  ["Prunus domestica", "Plūme", "Water in dry spells, especially while fruit swells.", "Prune lightly in late spring or summer. Remove dead wood and crossing branches.", "Fairly hardy. Avoid frost pockets and protect young trunks."],
+  ["Prunus padus", "Ieva", "Likes moist soil. Water only young plants or in long droughts.", "Prune after flowering if it outgrows its space.", "Very hardy. No protection needed."],
+  ["Ribes nigrum", "Upene", "Water deeply each week in dry weather, especially at flowering and while berries swell. Mulch to hold moisture.", "In late winter or early spring, cut about a third of the oldest stems to the ground.", "Very hardy. No protection needed."],
+  ["Ribes rubrum", "Sarkanā jāņoga", "Water weekly in dry spells while fruit develops.", "In early spring, remove stems older than about 5 years and thin the centre.", "Very hardy. No protection needed."],
+  ["Ribes uva-crispa", "Ērkšķoga", "Water in dry spells while berries swell. Mulch the roots.", "In early spring, remove old and low stems and open up the centre for air.", "Very hardy. No protection needed."],
+  ["Rubus idaeus", "Avene", "Water deeply weekly in dry weather from flowering to harvest. Mulch well.", "Cut fruited canes to the ground after harvest. Keep the strongest new canes.", "Hardy. Bend tall canes down in late autumn in exposed sites so snow covers them."],
+  ["Fragaria", "Zemene", "Water at the base 1 to 2 times a week while fruiting. Keep leaves and fruit dry.", "Remove runners you don't need. Cut old leaves after harvest.", "Mulch with straw or use fleece if there is little snow. Remove it in spring."],
+  ["Vaccinium corymbosum", "Krūmmellene", "Keep soil evenly moist, ideally with rainwater. It needs acid soil, so avoid hard tap water.", "From year 4, remove the oldest and weak stems in early spring.", "Hardy. Mulch with bark or pine needles and protect from hares."],
+  ["Vaccinium vitis-idaea", "Brūklene", "Keep acid soil moist in dry weather. Use rainwater if you can.", "Rarely needed. Cut back old, sparse plants in spring to renew them.", "Very hardy. Snow protects it well."],
+  ["Vaccinium myrtillus", "Mellene", "Needs moist, acid forest soil. Water garden plants with rainwater in dry spells.", "Rarely needed. Remove dead stems in spring.", "Very hardy. No protection needed."],
+  ["Vaccinium oxycoccos", "Dzērvene", "Needs constantly damp, acid, peaty soil. Use rainwater.", "Rarely needed. Trim straggling runners in spring.", "Very hardy. No protection needed."],
+  ["Hippophae rhamnoides", "Smiltsērkšķis", "Drought tolerant once established. Water young plants in dry spells.", "Prune in early spring. Remove old, dry and crossing branches, and wear gloves for the thorns.", "Very hardy. You need male and female plants for berries."],
+  ["Aronia", "Aronija", "Water young plants. Established shrubs tolerate most conditions but crop better with water in drought.", "In early spring, remove some of the oldest stems at the base.", "Very hardy. No protection needed."],
+  ["Sorbus aucuparia", "Pīlādzis", "Water young trees in dry spells. Older trees manage on rain.", "Prune in late winter only to remove damaged or crossing branches.", "Very hardy. Protect young trunks from hares."],
+  ["Viburnum opulus", "Irbene", "Likes moist soil. Water in dry spells.", "Prune after flowering to keep its shape, and remove old stems.", "Very hardy. No protection needed."],
+  ["Sambucus", "Plūškoks", "Water young plants in dry spells. Established shrubs need little.", "Hard prune in early spring to keep it compact, removing the oldest stems.", "Very hardy. No protection needed."],
+  ["Corylus", "Lazda", "Water young plants in dry spells. Older shrubs need little.", "In late winter, remove some old stems and suckers.", "Very hardy. No protection needed."],
+  ["Crataegus", "Vilkābele", "Water young plants. Tolerates dry spells once established.", "Trim after flowering or in late winter. Wear gloves for the thorns.", "Very hardy. No protection needed."],
+  ["Vitis", "Vīnogulājs", "Water young vines in dry weather. Established vines root deeply and need little.", "Prune hard in late autumn or early winter, not in spring when cuts bleed sap.", "Choose hardy varieties. Lay tender vines down and cover them with spruce branches."],
+
+  // Garden shrubs and climbers
+  ["Rosa", "Roze", "Water deeply at the base 1 to 2 times a week in dry weather. Keep leaves dry to reduce disease.", "In spring when buds swell, cut out dead wood and shorten stems to an outward-facing bud. Remove faded flowers.", "Mound soil or compost around the base in late autumn and cover with spruce branches. Uncover gradually in spring."],
+  ["Rosa rugosa", "Grumbuļainā roze", "Tolerates drought and sandy soil. Water young plants only.", "In early spring, remove old stems and trim suckers to keep it in bounds.", "Very hardy. No protection needed."],
+  ["Syringa", "Ceriņi", "Water young plants in dry spells. Established shrubs need little.", "Cut off faded flowers straight after flowering. Remove suckers and some old stems.", "Very hardy. No protection needed."],
+  ["Philadelphus", "Dārza jasmīns", "Water in dry spells, especially at flowering.", "Straight after flowering, cut flowered stems back and remove some old wood.", "Very hardy. Tips may freeze in hard winters, so trim them in spring."],
+  ["Hydrangea", "Hortenzija", "Likes constantly moist soil. Water deeply 1 to 2 times a week in dry weather.", "Panicle and smooth types: cut back in early spring. Bigleaf types: only remove old flowers and dead wood.", "Panicle and smooth types are hardy. Cover bigleaf types with dry leaves and fleece, or keep them in a frost-free place."],
+  ["Spiraea", "Spireja", "Water young plants in dry spells. Established shrubs need little.", "Spring-flowering types: prune after flowering. Summer-flowering types: prune in early spring.", "Very hardy. No protection needed."],
+  ["Forsythia", "Forsītija", "Water in dry spells while young.", "Prune straight after flowering. Remove some old stems at the base.", "Choose hardy varieties. Flower buds can freeze above the snow line in hard winters."],
+  ["Rhododendron", "Rododendrs", "Keep acid soil evenly moist, ideally with rainwater. Water well in autumn before frost.", "Snap off faded flowers. Prune only lightly after flowering.", "Mulch with pine needles or bark. Shade evergreen types with fleece from late-winter sun."],
+  ["Clematis", "Klematis", "Water deeply weekly in dry weather. Keep the roots cool with mulch or low plants.", "Pruning depends on the group. Late-summer flowering types can be cut to about 30 cm in early spring.", "Mulch the base in late autumn. Cover the crown with leaves or spruce branches."],
+  ["Parthenocissus", "Mežvīns", "Water young plants. Established plants need little.", "Trim in late winter or summer to keep it away from gutters and windows.", "Very hardy. No protection needed."],
+  ["Humulus lupulus", "Apinis", "Likes moist soil. Water in dry spells.", "Cut all stems to the ground in late autumn or early spring.", "Very hardy. Dies back and regrows from the roots."],
+
+  // Trees and conifers
+  ["Thuja", "Tūja", "Water young plants deeply each week in dry weather. Water well in autumn before frost.", "Trim in late spring to early summer. Don't cut back into old bare wood.", "Hardy. Tie up upright forms against snow and shade young plants from late-winter sun."],
+  ["Juniperus", "Kadiķis", "Drought tolerant once established. Water young plants in dry spells.", "Trim lightly in spring or summer. Don't cut into old bare wood.", "Very hardy. Shade young plants from late-winter sun."],
+  ["Picea", "Egle", "Likes moist soil. Water young trees in dry spells and before winter.", "Rarely needed. Remove dead branches. Hedges can be trimmed in early summer.", "Very hardy. Knock heavy snow off dwarf forms."],
+  ["Pinus", "Priede", "Tolerates dry, sandy soil. Water only young trees.", "To keep it compact, shorten new candles by half in late spring.", "Very hardy. No protection needed."],
+  ["Betula", "Bērzs", "Water young trees in dry spells. It uses a lot of water, so nearby plants may need extra.", "Prune only from midsummer to autumn, because it bleeds sap heavily in spring.", "Very hardy. No protection needed."],
+  ["Quercus", "Ozols", "Water young trees in dry spells. Older trees root deeply.", "Prune in late winter only to remove damaged or crossing branches.", "Very hardy. Protect young trees from deer and hares."],
+  ["Tilia", "Liepa", "Water young trees in dry spells.", "Prune in late winter. Tolerates hard pruning and shaping.", "Very hardy. No protection needed."],
+  ["Acer", "Kļava", "Water young trees in dry spells. Older trees manage on rain.", "Prune from late summer to autumn, because it bleeds sap in spring.", "Native maple is very hardy. Protect ornamental Japanese maples with fleece and mulch."],
+  ["Fraxinus", "Osis", "Likes moist soil. Water young trees in dry spells.", "Prune in late winter only when needed. Have dying branches over paths checked, because ash dieback is common.", "Very hardy. No protection needed."],
+  ["Populus", "Apse", "Water young trees in dry spells.", "Prune in late winter. Remove root suckers.", "Very hardy. No protection needed."],
+  ["Alnus", "Alksnis", "Likes wet soil. Water only young plants in drought.", "Prune in late winter only when needed.", "Very hardy. No protection needed."],
+  ["Salix", "Vītols", "Likes moist soil. Water in dry spells. Keep it away from drains.", "Prune hard in late winter if needed. It regrows quickly.", "Very hardy. No protection needed."],
+  ["Ulmus", "Goba", "Water young trees in dry spells.", "Prune in late winter only when needed.", "Very hardy. No protection needed."],
+  ["Aesculus hippocastanum", "Zirgkastaņa", "Water young trees in dry spells.", "Prune in winter only to remove damaged branches. Rake and remove fallen leaves in autumn to reduce leaf miner.", "Hardy. No protection needed once established."],
+
+  // Bulbs and perennials
+  ["Tulipa", "Tulpe", "Water only in dry spring weather. Keep bulbs dry in summer.", "Remove faded flowers. Let the leaves yellow before cutting them.", "Plant in September to October at three times the bulb depth. A thin mulch helps in snowless winters."],
+  ["Narcissus", "Narcise", "Water in dry spring weather while in growth and flower.", "Remove faded flowers. Let the leaves die back naturally.", "Hardy. Plant in early autumn. No lifting needed."],
+  ["Hyacinthus", "Hiacinte", "Water in dry spring weather. Keep dry in summer.", "Remove faded flower spikes. Let the leaves yellow.", "Mulch with leaves or peat in late autumn and remove it in spring."],
+  ["Crocus", "Krokuss", "Rarely needs watering. Rain is usually enough.", "No pruning. Let the leaves die back naturally.", "Hardy. No protection needed."],
+  ["Galanthus", "Sniegpulkstenīte", "Keep slightly moist in spring. No watering needed in summer.", "No pruning. Let the leaves die back naturally.", "Very hardy. No protection needed."],
+  ["Lilium", "Lilija", "Water at the base in dry weather. Avoid waterlogging.", "Remove faded flowers. Cut stems only after they yellow in autumn.", "Most types are hardy. Mulch in late autumn, and give tender types extra cover."],
+  ["Gladiolus", "Gladiola", "Water deeply weekly in dry weather.", "Cut faded spikes, leaving the leaves to feed the corm.", "Not hardy. Lift corms in early autumn and store them dry and cool at 5 to 10 °C."],
+  ["Dahlia", "Dālija", "Water deeply 1 to 2 times a week in dry weather.", "Pinch young plants for bushiness. Remove faded flowers.", "Not hardy. After the first frost, cut back, lift the tubers and store them frost-free at about 5 °C."],
+  ["Paeonia", "Peonija", "Water deeply in dry spells, especially in spring and in August.", "Remove faded flowers. Cut herbaceous stems to the ground in autumn.", "Very hardy. Don't plant too deep, with buds no more than 3 to 5 cm below soil."],
+  ["Iris", "Īriss", "Water in dry spells during spring and after flowering. Bearded irises dislike wet soil.", "Cut faded flower stems. Trim leaves back to a fan in late summer.", "Hardy. Keep bearded iris rhizomes near the surface and don't cover them with wet mulch."],
+  ["Hemerocallis", "Dienziede", "Water in dry spells, especially at flowering.", "Remove faded flower stems. Cut old leaves in autumn or spring.", "Very hardy. No protection needed."],
+  ["Phlox", "Floksis", "Water at the base weekly in dry weather. Mulch well.", "Remove faded flowers. Cut tall types to near the ground in autumn.", "Very hardy. No protection needed."],
+  ["Hosta", "Funkija", "Likes moist soil. Water weekly in dry weather, especially in sun.", "Remove faded flower stems. Clear dead leaves in autumn or spring.", "Very hardy. No protection needed."],
+  ["Astilbe", "Astilbe", "Keep constantly moist. It wilts quickly in dry soil.", "Leave faded flower heads for winter interest if you like. Cut back in early spring.", "Hardy. Mulch shallow roots in autumn."],
+  ["Lamprocapnos", "Sirdspuķe", "Keep moist in spring. Water in dry spells.", "Cut back yellowing stems after flowering.", "Very hardy. No protection needed."],
+  ["Aquilegia", "", "Water in dry spells. Tolerates some drought.", "Remove faded flowers unless you want seedlings. Cut back in autumn.", "Very hardy. No protection needed."],
+  ["Echinacea", "Ehinācija", "Water young plants. Established plants tolerate drought.", "Remove faded flowers for more blooms. Cut back in early spring.", "Hardy. Avoid wet soil in winter."],
+  ["Convallaria majalis", "Maijpuķīte", "Likes moist shade. Water in dry spells.", "Clear dead leaves in autumn. Thin spreading patches when needed.", "Very hardy. All parts are poisonous, including the berries."],
+  ["Leucanthemum", "Pīpene", "Water in dry spells while flowering. Tolerates some drought.", "Remove faded flowers. Cut back in autumn.", "Very hardy. No protection needed."],
+  ["Primula", "Prīmula", "Keep moist, especially in spring and in dry spells.", "Remove faded flowers and old leaves.", "Most types are hardy. Mulch lightly in snowless winters."],
+  ["Viola", "Vijolīte", "Water in dry spells and keep pot plants evenly moist.", "Remove faded flowers for more blooms.", "Hardy. Garden pansies may need light cover in snowless frost."],
+  ["Hepatica nobilis", "Zilā vizbulīte", "Likes shade and moist woodland soil. Water in dry spells.", "No pruning. Protected in the wild in places, so don't dig it up there.", "Very hardy. Leave fallen leaves on as natural mulch."],
+  ["Anemone nemorosa", "Baltais vizbulis", "Likes moist woodland soil in spring. It's dormant and needs no water in summer.", "No pruning needed.", "Very hardy. Leave fallen leaves on as natural mulch."],
+
+  // Summer flowers
+  ["Petunia", "Petūnija", "Water pots daily in hot weather, in the ground when dry.", "Remove faded flowers. Pinch back long stems for bushiness.", "Grown as an annual. It dies at frost, so plant out only after late May frosts."],
+  ["Tagetes", "Samtene", "Water when soil is dry. Avoid wetting the leaves.", "Remove faded flowers.", "Annual. Plant out after late May frosts and sow again next year."],
+  ["Calendula", "Kliņģerīte", "Water in dry spells.", "Remove faded flowers for more blooms.", "Annual. It usually self-seeds for next year."],
+  ["Tropaeolum", "Krese", "Water in dry spells. Too much feeding gives leaves rather than flowers.", "Remove faded flowers and trim long stems.", "Annual. Sow again after late May frosts."],
+  ["Helianthus annuus", "Saulespuķe", "Water deeply in dry spells, especially at flowering.", "No pruning. Stake tall plants.", "Annual. Leave some seed heads for birds."],
+  ["Papaver", "Magone", "Tolerates dry soil. Water only in long droughts.", "Remove faded flowers unless you want seed.", "Annual types self-seed. Perennial oriental poppy is hardy."],
+  ["Centaurea cyanus", "Rudzupuķe", "Tolerates dry soil. Water only in long droughts.", "Remove faded flowers for more blooms.", "Annual. Sow in spring or autumn, and it often self-seeds."],
+  ["Pelargonium", "Pelargonija", "Let the top soil dry between waterings. Water sparingly in winter.", "Remove faded flowers. Cut back by about a third in early spring.", "Not hardy. Bring indoors before frost and keep bright and cool at 8 to 12 °C."],
+
+  // Wild flowers and common weeds
+  ["Matricaria chamomilla", "Kumelīte", "Rarely needs water. Water only in long droughts.", "No pruning. Harvest flowers as they open.", "Annual. It self-seeds."],
+  ["Achillea millefolium", "Pelašķi", "Very drought tolerant. Rarely needs watering.", "Cut faded flowers. Cut back in autumn or spring.", "Very hardy. No protection needed."],
+  ["Tanacetum vulgare", "Biškrēsliņi", "Very drought tolerant. Rarely needs watering.", "Cut faded flowers to prevent spreading. Cut back in autumn.", "Very hardy. No protection needed."],
+  ["Urtica dioica", "Nātre", "Needs no watering. Thrives in rich, damp soil.", "Cut before it seeds to control it. Wear gloves.", "Very hardy. It regrows from the roots."],
+  ["Taraxacum", "Pienene", "Needs no watering.", "Remove flowers before seeds form if you don't want it to spread. Dig out the whole root to remove it.", "Very hardy. No protection needed."],
+  ["Trifolium", "Āboliņš", "Rarely needs watering.", "Mow or cut after flowering.", "Very hardy. No protection needed."],
+
+  // Herbs and vegetables
+  ["Lavandula", "Lavanda", "Water young plants. Established plants like dry soil, so don't overwater.", "After flowering, trim faded stems. Shape lightly in spring, but don't cut into old wood.", "Needs a sunny, well-drained spot. Cover with spruce branches, and avoid wet soil in winter."],
+  ["Mentha", "Piparmētra", "Keep moist and water in dry spells.", "Cut often to keep it bushy. Grow it in a pot or bed edging because it spreads.", "Very hardy. No protection needed."],
+  ["Melissa officinalis", "Melise", "Water in dry spells.", "Cut back after flowering for fresh leaves.", "Hardy. Mulch in snowless winters."],
+  ["Salvia", "Salvija", "Let soil dry between waterings. Avoid wet soil.", "Cut back lightly after flowering. Trim woody types in spring.", "Garden sage may need spruce branches over it. Tender ornamental types are annual here."],
+  ["Thymus", "Timiāns", "Drought tolerant. Water only in long dry spells.", "Trim after flowering to keep it compact.", "Hardy in well-drained soil. Cover lightly in snowless frost."],
+  ["Anethum graveolens", "Dilles", "Water in dry weather to stop early flowering.", "No pruning. Pick leaves as needed.", "Annual. Sow again every few weeks."],
+  ["Petroselinum crispum", "Pētersīļi", "Keep evenly moist.", "Pick outer leaves first. Remove flower stems.", "Biennial. It can survive winter with mulch or be potted indoors."],
+  ["Solanum lycopersicum", "Tomāts", "Water deeply and evenly at the base, about 2 to 3 times a week. Uneven watering causes cracks and rot.", "Remove side shoots on tall varieties. Remove lower leaves as they yellow.", "Annual. Plant out after late May frosts, or grow in a greenhouse."],
+  ["Cucumis sativus", "Gurķis", "Water often with lukewarm water. Keep soil constantly moist.", "Train up supports and pinch side shoots as the variety requires.", "Annual. Plant out after late May frosts, or grow in a greenhouse."],
+  ["Cucurbita", "Ķirbis", "Water deeply weekly at the base, more when fruiting.", "Pinch long vines after several fruits set.", "Annual. Plant out after late May frosts and harvest before autumn frost."],
+
+  // House plants
+  ["Aloe", "Alveja", "Water when the soil is fully dry, every 2 to 4 weeks. Water less in winter.", "Cut damaged leaves at the base. Remove offsets to repot them.", "House plant. Keep bright and above about 10 °C."],
+  ["Phalaenopsis", "Orhideja", "Water about once a week, then drain fully. Never leave it standing in water.", "Cut faded flower spikes above a node, or at the base if they turn brown.", "House plant. Keep bright and above about 16 °C, away from cold glass."],
+  ["Spathiphyllum", "Spatifils", "Keep soil lightly moist. Drooping leaves mean it needs water.", "Cut faded flower stems and yellow leaves at the base.", "House plant. Keep above about 15 °C and away from drafts."],
+  ["Chlorophytum comosum", "Hlorofīts", "Water when the top soil is dry. Water less in winter.", "Cut brown tips and old leaves. Pot up the baby plants.", "House plant. Keep above about 10 °C."],
+  ["Monstera", "Monstera", "Water when the top few centimetres of soil are dry. Water less in winter.", "Cut yellow leaves. Trim long stems in spring if needed.", "House plant. Keep bright and above about 15 °C."],
+  ["Crassula ovata", "Naudaskoks", "Let soil dry fully between waterings. Water rarely in winter.", "Trim in spring to shape it. Cuttings root easily.", "House plant. Keep bright and above about 5 °C."],
+  ["Dracaena", "Dracēna", "Let the top half of the soil dry. Water rarely in winter.", "Cut brown leaves. Tall stems can be cut back in spring.", "House plant. Keep above about 13 °C."],
+  ["Ficus", "Fikuss", "Water when the top soil is dry. Avoid overwatering.", "Trim in spring. Wear gloves because the sap irritates skin.", "House plant. Keep bright and above about 15 °C, away from drafts."],
+];
+const CARE_INDEX = new Map(CARE.map(row => [row[0].toLowerCase(), row]));
+
+function findCare(scientificName) {
+  const name = (scientificName || "").toLowerCase().replace(/\s*×\s*/g, " ").trim();
+  const species = name.split(/\s+/).slice(0, 2).join(" ");
+  const genus = name.split(/\s+/)[0];
+  if (CARE_INDEX.has(species)) return { row: CARE_INDEX.get(species), group: false };
+  if (CARE_INDEX.has(genus)) return { row: CARE_INDEX.get(genus), group: true };
+  return null;
+}
+</script>
+
+<script>
 const $ = id => document.getElementById(id);
-const KEY_NAME = "plant-camera-api-key";
-const MAX_SIDE = 1280;
+const KEY_NAME = "plant-camera-plantnet-key";
+const MAX_SIDE = 2048;
+const TIMEOUT_MS = 45000;
 let memoryKey = "";
 let stream = null;
+
+// The earlier version of this app saved a Claude key here. It isn't used any more.
+try { localStorage.removeItem("plant-camera-api-key"); } catch {}
 
 function getKey() {
   try { return localStorage.getItem(KEY_NAME) || memoryKey; } catch { return memoryKey; }
@@ -217,7 +359,7 @@ function toJpeg(source, width, height) {
   c.width = Math.round(width * scale);
   c.height = Math.round(height * scale);
   c.getContext("2d").drawImage(source, 0, 0, c.width, c.height);
-  return c.toDataURL("image/jpeg", 0.85);
+  return c.toDataURL("image/jpeg", 0.9);
 }
 
 $("shoot").onclick = () => {
@@ -237,67 +379,27 @@ $("file").onchange = () => {
   img.src = url;
 };
 
-// Claude
-const PROMPT = `The photo was taken by a home gardener who wants to know what this plant is and how to look after it.
-Identify the plant or flower. Be honest about uncertainty: use "low" confidence when the photo doesn't show enough to tell, and list the closest alternatives.
-Write the care advice for a home gardener in plain language, 2 to 4 sentences each, with practical specifics:
-- watering: how often and how much, in the growing season and in the dormant season, and how to tell it needs water
-- pruning: when and how to prune, and what to cut
-- wintering: cold hardiness in degrees Celsius and Fahrenheit, and how to protect it or where to keep it over winter
-If the photo shows no plant, set is_plant to false and leave the other text fields empty.`;
-
-const SCHEMA = {
-  type: "object",
-  additionalProperties: false,
-  required: ["is_plant", "common_name", "scientific_name", "family", "confidence", "alternatives", "watering", "pruning", "wintering"],
-  properties: {
-    is_plant: { type: "boolean" },
-    common_name: { type: "string" },
-    scientific_name: { type: "string" },
-    family: { type: "string" },
-    confidence: { type: "string", enum: ["high", "medium", "low"] },
-    alternatives: { type: "array", items: { type: "string" } },
-    watering: { type: "string" },
-    pruning: { type: "string" },
-    wintering: { type: "string" },
-  },
-};
-
-async function askClaude(dataUrl, key) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-      "anthropic-beta": "server-side-fallback-2026-07-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-    body: JSON.stringify({
-      model: "claude-opus-5-5",
-      max_tokens: 8000,
-      fallbacks: "default",
-      output_config: { effort: "medium", format: { type: "json_schema", schema: SCHEMA } },
-      messages: [{
-        role: "user",
-        content: [
-          { type: "image", source: { type: "base64", media_type: "image/jpeg", data: dataUrl.split(",")[1] } },
-          { type: "text", text: PROMPT },
-        ],
-      }],
-    }),
-  });
-  const body = await res.json().catch(() => null);
-  if (!res.ok) {
-    const err = new Error(body?.error?.message || `Request failed (${res.status})`);
-    err.status = res.status;
-    throw err;
+// Pl@ntNet
+async function askPlantNet(dataUrl, key) {
+  const photo = await (await fetch(dataUrl)).blob();
+  const form = new FormData();
+  form.append("images", photo, "plant.jpg");
+  form.append("organs", "auto");
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), TIMEOUT_MS);
+  try {
+    const url = "https://my-api.plantnet.org/v2/identify/all?nb-results=4&lang=en&api-key=" + encodeURIComponent(key);
+    const res = await fetch(url, { method: "POST", body: form, signal: ctl.signal });
+    const body = await res.json().catch(() => null);
+    if (!res.ok) {
+      const err = new Error(body?.message || `Request failed (${res.status})`);
+      err.status = res.status;
+      throw err;
+    }
+    return body;
+  } finally {
+    clearTimeout(timer);
   }
-  if (body.stop_reason === "refusal") throw new Error("Claude declined to answer for this photo. Try a different picture.");
-  if (body.stop_reason === "max_tokens") throw new Error("The answer was cut short. Please try again.");
-  const text = body.content.find(b => b.type === "text")?.text;
-  if (!text) throw new Error("Claude sent back an empty answer. Please try again.");
-  return JSON.parse(text);
 }
 
 let pendingPhoto = null;
@@ -307,34 +409,59 @@ async function identify(dataUrl) {
   $("busyImg").src = dataUrl;
   show("busy");
   try {
-    const plant = await askClaude(dataUrl, key);
+    const answer = await askPlantNet(dataUrl, key);
     stopCamera();
-    if (!plant.is_plant) {
-      showMessage("No plant found", "Move closer so one leaf or flower fills the frame, then try again.", dataUrl);
-    } else {
-      showResult(plant, dataUrl);
-    }
+    if (!answer.results?.length) noPlant(dataUrl);
+    else showResult(answer.results, dataUrl);
   } catch (e) {
     stopCamera();
-    if (e.status === 401) showMessage("That API key doesn't work", "Check the key in the Anthropic console and enter it again.", dataUrl, true);
-    else if (e.status === 429) showMessage("Too many requests", "Wait a minute, then try again.", dataUrl);
-    else if (e instanceof TypeError) showMessage("Can't reach Claude", "Check your internet connection and try again.", dataUrl);
-    else showMessage("Couldn't identify this plant", e.message, dataUrl, e.status === 400 || e.status === 403);
+    if (e.status === 404) noPlant(dataUrl);
+    else if (e.status === 401 || e.status === 403) showMessage("That key doesn't work here", 'Check the key, tick "expose my API key" and add https://texnonik.github.io under "Authorized domains" in your Pl@ntNet settings.', dataUrl, true);
+    else if (e.status === 429) showMessage("Daily limit reached", "The free plan allows 500 scans a day. Try again tomorrow.", dataUrl);
+    else if (e.name === "AbortError") showMessage("This is taking too long", "Check your internet connection and try again.", dataUrl);
+    else if (e instanceof TypeError) showMessage("Can't reach Pl@ntNet", "Check your internet connection and try again.", dataUrl);
+    else showMessage("Couldn't identify this plant", e.message, dataUrl);
   }
 }
 
-function showResult(p, dataUrl) {
+function noPlant(dataUrl) {
+  showMessage("No plant found", "Move closer so one leaf or flower fills the frame, then try again.", dataUrl);
+}
+
+function showResult(results, dataUrl) {
+  const best = results[0];
+  const species = best.species;
+  const latin = species.scientificNameWithoutAuthor;
+  const care = findCare(latin);
+  const englishName = species.commonNames?.[0];
+  const latvianName = care?.row[1];
+  const family = species.family?.scientificNameWithoutAuthor;
+
   $("rImg").src = dataUrl;
-  $("rName").textContent = p.common_name || p.scientific_name;
-  $("rLatin").textContent = p.scientific_name;
-  $("rFamily").textContent = p.family ? `Family ${p.family}` : "";
-  $("rConf").textContent = { high: "Confident match", medium: "Likely match", low: "Unsure, please double-check" }[p.confidence] || "";
-  $("rConf").classList.toggle("unsure", p.confidence !== "high");
-  $("rWater").textContent = p.watering;
-  $("rPrune").textContent = p.pruning;
-  $("rWinter").textContent = p.wintering;
-  $("rAlt").hidden = !p.alternatives?.length;
-  $("rAlt").textContent = p.alternatives?.length ? `It could also be: ${p.alternatives.join(", ")}.` : "";
+  $("rName").textContent = latvianName || englishName || latin;
+  $("rLatin").textContent = latin;
+  $("rFamily").textContent = [latvianName && englishName, family && `Family ${family}`].filter(Boolean).join(" · ");
+
+  const level = best.score >= 0.6 ? "high" : best.score >= 0.25 ? "medium" : "low";
+  $("rConf").textContent = { high: "Confident match", medium: "Likely match", low: "Unsure, please double-check" }[level];
+  $("rConf").classList.toggle("unsure", level !== "high");
+
+  $("rCare").hidden = !care;
+  $("rMissing").hidden = !!care;
+  if (care) {
+    $("rWater").textContent = care.row[2];
+    $("rPrune").textContent = care.row[3];
+    $("rWinter").textContent = care.row[4];
+  } else {
+    $("rSearch").href = "https://www.google.com/search?q=" + encodeURIComponent(latin + " care");
+  }
+  $("rGroup").hidden = !care?.group;
+  $("rGroup").textContent = care?.group ? `This is general advice for the ${care.row[0]} group. Your variety may differ.` : "";
+
+  const others = results.slice(1).filter(r => r.score >= 0.05).map(r => r.species.commonNames?.[0] || r.species.scientificNameWithoutAuthor);
+  $("rAlt").hidden = !others.length;
+  $("rAlt").textContent = others.length ? `It could also be: ${others.join(", ")}.` : "";
+
   show("result");
   $("result").scrollTop = 0;
 }
@@ -360,8 +487,8 @@ $("keyCancel").onclick = () => { pendingPhoto = null; backToCamera(); };
 $("keyForm").onsubmit = e => {
   e.preventDefault();
   const value = $("keyInput").value.trim();
-  if (!value.startsWith("sk-ant-")) {
-    $("keyErr").textContent = "Claude API keys start with sk-ant-. Copy the whole key and paste it again.";
+  if (!value || value.startsWith("sk-ant-")) {
+    $("keyErr").textContent = value ? "That's a Claude key. This app needs your free Pl@ntNet key." : "Paste your Pl@ntNet key first.";
     $("keyErr").hidden = false;
     return;
   }
